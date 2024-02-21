@@ -90,14 +90,14 @@ def run(init_lr=0.1,
     correct_5 = 0
     correct_10 = 0
 
-    top1_fp = np.zeros(num_classes, dtype=np.int)
-    top1_tp = np.zeros(num_classes, dtype=np.int)
+    top1_fp = np.zeros(num_classes, dtype=np.int32)
+    top1_tp = np.zeros(num_classes, dtype=np.int32)
 
-    top5_fp = np.zeros(num_classes, dtype=np.int)
-    top5_tp = np.zeros(num_classes, dtype=np.int)
+    top5_fp = np.zeros(num_classes, dtype=np.int32)
+    top5_tp = np.zeros(num_classes, dtype=np.int32)
 
-    top10_fp = np.zeros(num_classes, dtype=np.int)
-    top10_tp = np.zeros(num_classes, dtype=np.int)
+    top10_fp = np.zeros(num_classes, dtype=np.int32)
+    top10_tp = np.zeros(num_classes, dtype=np.int32)
 
     for data in dataloaders["test"]:
         inputs, labels, video_id = data  # inputs: b, c, t, h, w
@@ -162,16 +162,16 @@ def ensemble(mode, root, train_split, weights, num_classes):
     correct = 0
     correct_5 = 0
     correct_10 = 0
-    # confusion_matrix = np.zeros((num_classes,num_classes), dtype=np.int)
+    # confusion_matrix = np.zeros((num_classes,num_classes), dtype=np.int32)
 
-    top1_fp = np.zeros(num_classes, dtype=np.int)
-    top1_tp = np.zeros(num_classes, dtype=np.int)
+    top1_fp = np.zeros(num_classes, dtype=np.int32)
+    top1_tp = np.zeros(num_classes, dtype=np.int32)
 
-    top5_fp = np.zeros(num_classes, dtype=np.int)
-    top5_tp = np.zeros(num_classes, dtype=np.int)
+    top5_fp = np.zeros(num_classes, dtype=np.int32)
+    top5_tp = np.zeros(num_classes, dtype=np.int32)
 
-    top10_fp = np.zeros(num_classes, dtype=np.int)
-    top10_tp = np.zeros(num_classes, dtype=np.int)
+    top10_fp = np.zeros(num_classes, dtype=np.int32)
+    top10_tp = np.zeros(num_classes, dtype=np.int32)
 
     for data in dataloaders["test"]:
         inputs, labels, video_id = data  # inputs: b, c, t, h, w
@@ -264,7 +264,7 @@ if __name__ == '__main__':
     num_classes = 2000
     save_model = './checkpoints/'
 
-    root = '../../data/WLASL2000'
+    root = '../../data/WLASL2000' # 改colab mount 硬碟的位置
 
     train_split = 'preprocess/nslt_{}.json'.format(num_classes)
     weights = 'archived/asl2000/FINAL_nslt_2000_iters=5104_top1=32.48_top5=57.31_top10=66.31.pt'
