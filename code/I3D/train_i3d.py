@@ -190,7 +190,7 @@ def run(configs,
 if __name__ == '__main__':
     # WLASL setting
     mode = 'rgb'
-    root = {'word': '../../data/WLASL2000'} # 改colab mount 硬碟的位置
+    root = {'word': '/content/gdrive/MyDrive/data'} # 改colab mount 硬碟的位置
 
     save_model = 'checkpoints/'
     train_split = 'preprocess/nslt_2000.json'

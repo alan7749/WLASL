@@ -264,7 +264,7 @@ if __name__ == '__main__':
     num_classes = 2000
     save_model = './checkpoints/'
 
-    root = '../../data/WLASL2000' # 改colab mount 硬碟的位置
+    root = '/content/gdrive/MyDrive/data' # 改colab mount 硬碟的位置
 
     train_split = 'preprocess/nslt_{}.json'.format(num_classes)
     weights = 'archived/asl2000/FINAL_nslt_2000_iters=5104_top1=32.48_top5=57.31_top10=66.31.pt'
