@@ -110,7 +110,7 @@ def run(configs,
             num_iter = 0
             optimizer.zero_grad()
 
-            confusion_matrix = np.zeros((num_classes, num_classes), dtype=np.int)
+            confusion_matrix = np.zeros((num_classes, num_classes), dtype=int)
             # Iterate over data.
             for data in dataloaders[phase]:
                 num_iter += 1
@@ -173,6 +173,8 @@ def run(configs,
                     best_val_score = val_score
                     model_name = save_model + "nslt_" + str(num_classes) + "_" + str(steps).zfill(
                                    6) + '_%3f.pt' % val_score
+                    if not os.path.isdir(save_model):
+                        os.mkdir(save_model)
 
                     torch.save(i3d.module.state_dict(), model_name)
                     print(model_name)
@@ -185,6 +187,15 @@ def run(configs,
                                                                                                               ))
 
                 scheduler.step(tot_loss * num_steps_per_update / num_iter)
+        # model_name = save_model + "nslt_" + str(num_classes) + "_" + str(steps).zfill(
+        #                            6) + '_%3f.pt' % val_score
+        # torch.save({
+        #     'epoch': epoch,
+        #     'model_state_dict': i3d.state_dict(),
+        #     'optimizer_state_dict': optimizer.state_dict(),
+        #     'loss': loss,
+        #     ...
+        #     }, model_name) # checkPoint
 
 
 if __name__ == '__main__':
