@@ -61,6 +61,7 @@ def run(configs,
     dataloaders = {'train': dataloader, 'test': val_dataloader}
     datasets = {'train': dataset, 'test': val_dataset}
 
+    checkpoint = torch.load("/content/gdrive/MyDrive/sign_pt/nslt_2000_000044")
     # setup the model
     if mode == 'flow':
         i3d = InceptionI3d(400, in_channels=2)
@@ -71,6 +72,7 @@ def run(configs,
 
     num_classes = dataset.num_classes
     i3d.replace_logits(num_classes)
+    i3d.load_state_dict(checkpoint['model_state_dict'])
 
     if weights:
         print('loading weights {}'.format(weights))
@@ -82,18 +84,24 @@ def run(configs,
     lr = configs.init_lr
     weight_decay = configs.adam_weight_decay
     optimizer = optim.Adam(i3d.parameters(), lr=lr, weight_decay=weight_decay)
-
+    
+    optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+    
     num_steps_per_update = configs.update_per_step  # accum gradient
     steps = 0
     epoch = 0
 
+    epoch = checkpoint['epoch']
+    steps = checkpoint['steps']
+
     best_val_score = 0
     # train it
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min', patience=5, factor=0.3)
+    scheduler.load_state_dict(checkpoint['scheduler'])
     while steps < configs.max_steps and epoch < 400:  # for epoch in range(num_epochs):
         print('Step {}/{}'.format(steps, configs.max_steps))
         print('-' * 10)
-
+        print(f'lr {lr}')
         epoch += 1
         # Each epoch has a training and validation phase
         for phase in ['train', 'test']:
@@ -167,6 +175,16 @@ def run(configs,
                                                                                                                  tot_loss / 10,
                                                                                                                  acc))
                         tot_loss = tot_loc_loss = tot_cls_loss = 0.
+            model_name = "/content/gdrive/MyDrive/sign_pt/" + "nslt_" + str(num_classes) + "_" + str(steps).zfill(
+                                        6)
+            torch.save({
+                'epoch': epoch,
+                'model_state_dict': i3d.module.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'loss': loss,
+                'scheduler': scheduler.state_dict(), 
+                'steps': steps
+                }, model_name) # checkPoint
             if phase == 'test':
                 val_score = float(np.trace(confusion_matrix)) / np.sum(confusion_matrix)
                 if val_score > best_val_score or epoch % 2 == 0:
@@ -194,7 +212,8 @@ def run(configs,
         #     'model_state_dict': i3d.state_dict(),
         #     'optimizer_state_dict': optimizer.state_dict(),
         #     'loss': loss,
-        #     ...
+        #     'scheduler': scheduler.state_dict(), 
+        #     'step': step
         #     }, model_name) # checkPoint
 
 
